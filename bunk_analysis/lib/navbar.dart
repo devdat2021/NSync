@@ -7,7 +7,6 @@ class CustomSideBar extends StatelessWidget {
   final String usn;
   final ValueChanged<String> onSectionSelected;
   final VoidCallback onLogout;
-  final String? profileImageUrl;
 
   const CustomSideBar({
     super.key,
@@ -17,7 +16,6 @@ class CustomSideBar extends StatelessWidget {
     required this.onSectionSelected,
     required this.usn,
     required this.onLogout,
-    this.profileImageUrl,
   });
 
   @override
@@ -31,7 +29,7 @@ class CustomSideBar extends StatelessWidget {
           children: [
             const SizedBox(width: 10),
             Padding(
-              padding: const EdgeInsets.fromLTRB(100, 16, 16, 0),
+              padding: const EdgeInsets.fromLTRB(110, 16, 16, 0),
               child: Text(
                 'Profile',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -76,6 +74,8 @@ class CustomSideBar extends StatelessWidget {
 
   Widget _buildProfileSection(BuildContext context, ColorScheme colorScheme) {
     final textTheme = Theme.of(context).textTheme;
+    String? profileImageUrl =
+        "https://university-student-photos.s3.ap-south-1.amazonaws.com/049/student_photos/$usn.JPG";
 
     return Card(
       elevation: 2,
@@ -88,12 +88,7 @@ class CustomSideBar extends StatelessWidget {
             CircleAvatar(
               radius: 40,
               backgroundColor: colorScheme.surface,
-              backgroundImage: profileImageUrl != null
-                  ? NetworkImage(profileImageUrl!)
-                  : null,
-              child: profileImageUrl == null
-                  ? Icon(Icons.person, size: 38, color: colorScheme.primary)
-                  : null,
+              backgroundImage: NetworkImage(profileImageUrl),
             ),
             const SizedBox(height: 16),
             Text(

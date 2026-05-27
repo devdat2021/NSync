@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'navbar.dart';
+import 'presentation/screens/login_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -8,28 +9,56 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'NSync',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.deepPurple,
+          brightness: Brightness.light,
+        ),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      // darkTheme: ThemeData.dark(),
+      // 2. The dark theme config
+      // darkTheme: ThemeData(
+      //   useMaterial3: true,
+      //   colorScheme: ColorScheme.fromSeed(
+      //     seedColor: Colors.deepPurple,
+      //     brightness: Brightness.dark,
+      //   ),
+      // ),
+
+      // 3. Tells Flutter to automatically switch based on device settings
+      themeMode: ThemeMode.system,
+      // theme: ThemeData(
+      //   useMaterial3: true,
+      //   colorScheme: ColorScheme.fromSeed(
+      //     seedColor: const Color.fromARGB(255, 118, 193, 222),
+      //     brightness: Brightness.dark, // This forces the dark theme palette
+      //   ),
+      // ),
+      // theme: ThemeData(
+      //   colorScheme: ColorScheme.fromSeed(
+      //     seedColor: const Color.fromARGB(255, 224, 147, 147),
+      //   ),
+      // ),
+      // home: const HomePage(title: 'NSync'),
+      home: const LoginScreen(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key, required this.title});
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<HomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<HomePage> {
   String _selectedSection = 'Home';
 
   void _selectSection(String section) {
@@ -54,7 +83,6 @@ class _MyHomePageState extends State<MyHomePage> {
         userEmail: 'john@example.com',
         userMobile: '+1 555 0100',
         usn: 'NNM24IS145',
-        profileImageUrl: null,
         onSectionSelected: _selectSection,
         onLogout: _handleLogout,
       ),

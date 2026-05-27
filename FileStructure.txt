@@ -1,0 +1,27 @@
+lib/
+│
+├── main.dart                       # Entry point: Initializes app-wide dark theme
+│
+├── core/                           # App-wide constants, security vaults, and themes
+│   ├── constants/
+│   │   └── app_colors.dart         # Hex codes for your exact midnight/emerald dark theme
+│   └── security/
+│       └── credential_vault.dart   # Encrypted Hardware-Backed storage wrapper
+│
+├── data/                           # Data layer (Scraping, Local Caching, Data Models)
+│   ├── models/
+│   │   └── course_attendance.dart  # Holds data and your custom bunk/recovery math
+│   ├── providers/
+│   │   └── portal_scraper.dart     # Emulated 2-step cURL networking (Dio + Cookies)
+│   └── repositories/
+│       └── attendance_data.dart # Logic coordinating cache vs fresh live server data
+│
+└── presentation/                   # Presentation Layer (Separate Scaffolds & Views)
+    ├── screens/
+    │   ├── splash_gatekeeper.dart  # Routes user based on saved login presence
+    │   ├── setup_login_screen.dart # User credential input page (first-time launch)
+    │   ├── dashboard_screen.dart   # Main view matching your uploaded high-contrast UI
+    │   └── detailed_calc_screen.dart # Separate Scaffold deep-dive calculator view
+    └── widgets/
+        ├── overall_stats_card.dart # The large top component (74.2% summary layout)
+        └── attendance_card_item.dart # The dynamic course card component with pill badges
