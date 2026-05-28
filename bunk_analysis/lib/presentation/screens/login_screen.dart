@@ -1,6 +1,9 @@
+// import 'package:bunk_analysis/main.dart';
 import 'package:flutter/material.dart';
 import '../../core/security/credential_vault.dart';
 import '../../data/providers/portal_scrapper.dart';
+import 'dashboard_screen.dart';
+import '../../data/repositories/attendance_data.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -29,10 +32,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
     final regno = _regnoController.text.trim();
     final password = _passwordController.text;
-
+    final api = PortalApi();
     bool success = false;
     try {
-      success = await PortalApi().login(regno: regno, password: password);
+      success = await api.login(regno: regno, password: password);
     } catch (e) {
       success = false;
     }
@@ -41,9 +44,22 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (success) {
       await CredentialVault.saveCredentials(regno: regno, password: password);
+      final profile = await api.profile();
+      final attendance = await api.fetchAttendance();
+      print("ATTENDANCE:");
+      print(attendance.data);
+      print("PROFILE:");
+      print(profile.data);
+      await LocalCache.saveProfile(profile.data);
+      await LocalCache.saveAttendance(attendance.data);
+
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Login successful')));
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const HomePage(title: 'NSync')),
+      );
       // Optionally save credentials here if you have a secure vault:
       // await CredentialVault.saveCredentials(regno: regno, password: password);
     } else {

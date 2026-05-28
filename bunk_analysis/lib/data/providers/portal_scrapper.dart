@@ -1,9 +1,5 @@
 import 'dart:convert';
-
-import 'package:dio/dio.dart';
-import 'package:dio_cookie_manager/dio_cookie_manager.dart';
-import 'package:cookie_jar/cookie_jar.dart';
-
+import 'package:intl/intl.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:cookie_jar/cookie_jar.dart';
@@ -75,5 +71,21 @@ class PortalApi {
       print(e);
       return false;
     }
+  }
+
+  Future<Response> profile() async {
+    return await dio.post('/src/profile.php');
+  }
+
+  Future<Response> fetchAttendance() async {
+    String today = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    return await dio.get(
+      '/app.php',
+      queryParameters: {
+        'a': 'viewAttendanceDetsummary',
+        'univcode': '049',
+        'date': today,
+      },
+    );
   }
 }

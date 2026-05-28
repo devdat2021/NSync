@@ -86,9 +86,12 @@ class CustomSideBar extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             CircleAvatar(
-              radius: 40,
-              backgroundColor: colorScheme.surface,
-              backgroundImage: NetworkImage(profileImageUrl),
+              radius: 45,
+              backgroundColor: Colors.white,
+              child: CircleAvatar(
+                radius: 43,
+                backgroundImage: NetworkImage(profileImageUrl),
+              ),
             ),
             const SizedBox(height: 16),
             Text(
