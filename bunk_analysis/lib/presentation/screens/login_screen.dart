@@ -174,8 +174,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               backgroundColor: Color.lerp(
                                 theme.colorScheme.inversePrimary,
                                 Colors.purple,
-                                0.5,
+                                1.0,
                               ),
+                              // backgroundColor: theme.colorScheme.inversePrimary,
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(

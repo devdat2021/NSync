@@ -1,19 +1,17 @@
 import 'dart:convert';
-
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../data/models/course_attendance.dart';
 
 class LocalCache {
   // PROFILE ----------------------------
 
   static Future<void> saveProfile(dynamic profileData) async {
     final prefs = await SharedPreferences.getInstance();
-
     await prefs.setString('profile_cache', profileData.toString());
   }
 
   static Future<dynamic> getProfile() async {
     final prefs = await SharedPreferences.getInstance();
-
     final data = prefs.getString('profile_cache');
 
     if (data == null) return null;
@@ -25,7 +23,6 @@ class LocalCache {
 
   static Future<void> saveAttendance(dynamic attendanceData) async {
     final prefs = await SharedPreferences.getInstance();
-
     await prefs.setString('attendance_cache', jsonEncode(attendanceData));
 
     // SAVE TIMESTAMP
@@ -37,17 +34,21 @@ class LocalCache {
 
   static Future<dynamic> getAttendance() async {
     final prefs = await SharedPreferences.getInstance();
-
     final data = prefs.getString('attendance_cache');
 
     if (data == null) return null;
 
-    return jsonDecode(data);
+    var decoded = jsonDecode(data);
+
+    if (decoded is String) {
+      decoded = jsonDecode(decoded);
+    }
+
+    return decoded;
   }
 
   static Future<DateTime?> getAttendanceLastUpdated() async {
     final prefs = await SharedPreferences.getInstance();
-
     final timestamp = prefs.getInt('attendance_last_updated');
 
     if (timestamp == null) return null;
@@ -69,7 +70,19 @@ class LocalCache {
     }
 
     final difference = DateTime.now().difference(lastUpdated);
+    return difference.inMinutes >= 60;
+  }
 
-    return difference.inMinutes >= 30;
+  // Add this to your LocalCache class
+  static Future<List<CourseData>> getParsedCourses() async {
+    final raw = await getAttendance();
+
+    if (raw == null) return [];
+
+    print(raw.runtimeType); // should be Map<String, dynamic>
+
+    final list = raw['data'] as List<dynamic>? ?? [];
+
+    return CourseData.parseCourses(list);
   }
 }
