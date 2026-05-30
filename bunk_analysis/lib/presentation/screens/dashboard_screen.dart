@@ -7,9 +7,13 @@ import '../../core/constants/app_colors.dart';
 import '../../data/models/course_attendance.dart';
 import '../../presentation/screens/widgets/attendance_card.dart';
 import '../../data/providers/portal_scrapper.dart';
+import '../../presentation/screens/widgets/overall_stats.dart';
+import '../../presentation/screens/widgets/appbar.dart';
+import '../../utils/analytics.dart';
+
 // ─── Placeholder courses ──────────────────────────────────────────────────────
 
-List<CourseData> _placeholderCourses = [];
+List<CourseData> _Courses = [];
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
@@ -26,6 +30,7 @@ class _MyHomePageState extends State<HomePage> {
   String email = '';
   String usn = '';
   bool _loading = true;
+  DateTime? lastUpdate;
 
   @override
   void initState() {
@@ -37,17 +42,20 @@ class _MyHomePageState extends State<HomePage> {
   Future<void> _loadAttendance() async {
     final cache = LocalCache();
     final shouldRefresh = await cache.shouldRefreshAttendance();
+    final update = await LocalCache.getAttendanceLastUpdated();
 
     if (shouldRefresh) {
       // your existing API call that saves via LocalCache.saveAttendance(...)
       await _fetchAndSaveAttendance();
+      await AnalyticsService.logAttendanceRefresh(forced: false);
     }
 
     final courses = await LocalCache.getParsedCourses();
     if (!mounted) return;
     setState(() {
-      _placeholderCourses = courses;
+      _Courses = courses;
       _loading = false;
+      lastUpdate = update;
     });
   }
 
@@ -92,7 +100,8 @@ class _MyHomePageState extends State<HomePage> {
     Navigator.of(context).pop();
   }
 
-  void _handleLogout() {
+  void _handleLogout() async {
+    await AnalyticsService.logLogout();
     Navigator.of(context).pop();
     ScaffoldMessenger.of(
       context,
@@ -105,9 +114,43 @@ class _MyHomePageState extends State<HomePage> {
     );
   }
 
+  String _lastUpdatedLabel() {
+    if (lastUpdate == null) return 'never synced';
+    final diff = DateTime.now().difference(lastUpdate!).inMinutes;
+    if (diff < 1) return 'updated just now';
+    if (diff == 1) return 'updated 1 min ago';
+    return 'updated $diff mins ago';
+  }
+
   @override
   Widget build(BuildContext context) {
     final c = AppColorSchemeExt.of(context);
+    // return Scaffold(
+    //   backgroundColor: c.pageBg,
+    //   drawer: CustomSideBar(
+    //     userName: userName,
+    //     userEmail: email,
+    //     userMobile: regno,
+    //     usn: usn,
+    //     onSectionSelected: _selectSection,
+    //     onLogout: _handleLogout,
+    //   ),
+    //   // no appBar here
+    //   body: NestedScrollView(
+    //     headerSliverBuilder: (context, _) => [
+    //       SliverPersistentHeader(
+    //         pinned: true,
+    //         delegate: HomeAppBar(
+    //           userName: userName,
+    //           appTitle: widget.title,
+    //           onRefresh: _loadAttendance,
+    //           c: c,
+    //         ),
+    //       ),
+    //     ],
+    //     body: _buildBody(),
+    //   ),
+    // );
     return Scaffold(
       backgroundColor: c.pageBg,
       drawer: CustomSideBar(
@@ -143,21 +186,58 @@ class _MyHomePageState extends State<HomePage> {
     switch (_selectedSection) {
       case 'Home':
         return AttendanceView(
-          courses: _placeholderCourses,
+          onRefresh: () async {
+            await AnalyticsService.logAttendanceRefresh(forced: true);
+            await _loadAttendance();
+          },
+          courses: _Courses,
           topChildren: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-              child: AttendanceSummaryCard(courses: _placeholderCourses),
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+              child: Text(
+                'Hey, $userName 👋',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                  color: AppColorSchemeExt.of(context).textPrimary,
+                  letterSpacing: -0.3,
+                ),
+              ),
             ),
             Padding(
-              padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
-              child: Text(
-                'YOUR COURSES',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.4,
-                ),
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              child: AttendanceSummaryCard(courses: _Courses),
+            ),
+            // Padding(
+            //   padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+            //   child: Text(
+            //     'YOUR COURSES',
+            //     style: TextStyle(
+            //       fontSize: 12,
+            //       fontWeight: FontWeight.w600,
+            //       letterSpacing: 1.4,
+            //     ),
+            //   ),
+            // ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'YOUR COURSES',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 1.4,
+                      color: c.textPrimary,
+                    ),
+                  ),
+                  Text(
+                    _lastUpdatedLabel(),
+                    style: AppTextStyles.statLabel.copyWith(color: c.textMuted),
+                  ),
+                ],
               ),
             ),
           ],

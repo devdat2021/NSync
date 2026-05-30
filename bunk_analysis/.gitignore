@@ -43,3 +43,16 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Android
+android/.gradle/
+android/build/
+android/local.properties
+android/key.properties        # if you have a signing key config
+*.jks                         # keystore files
+
+# Firebase — keep google-services.json out of public repos
+android/app/google-services.json
+lib/firebase_options.dart
+firebase.json
+

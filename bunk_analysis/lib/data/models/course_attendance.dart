@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/threshold.dart';
 
 class CourseData {
   final String id;
@@ -19,7 +20,11 @@ class CourseData {
   });
 
   double get percentage => total == 0 ? 0 : (attended / total) * 100;
-  bool get isSafe => percentage >= 75;
+  bool get isSafe => percentage >= AttendanceThresholds.safe;
+  bool get isWarning =>
+      percentage >= AttendanceThresholds.warning &&
+      percentage < AttendanceThresholds.safe;
+  bool get isAtRisk => percentage < AttendanceThresholds.warning;
 
   factory CourseData.fromJson(Map<String, dynamic> json, Color color) {
     final raw = json['fsubname'] as String;
@@ -43,12 +48,18 @@ class CourseData {
     );
   }
   int get bunkable {
-    final max = (attended / 0.75).floor() - total;
+    final max = (attended / 0.85).floor() - total;
     return max < 0 ? 0 : max;
   }
 
   int get mustAttend {
-    final needed = ((0.75 * total) - attended) / 0.25;
+    final needed = ((0.85 * total) - attended) / 0.15;
+    return needed.ceil().clamp(0, 999);
+  }
+
+  int get classesToClearPenalty {
+    if (!isWarning) return 0;
+    final needed = ((0.85 * total) - attended) / 0.15;
     return needed.ceil().clamp(0, 999);
   }
 

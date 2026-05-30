@@ -1,202 +1,59 @@
 import 'package:flutter/material.dart'; // ─── Attendance list view ─────────────────────────────────────────────────────
 import '../../../data/models/course_attendance.dart';
 import '../../../core/constants/app_colors.dart';
-
-class AttendanceSummaryCard extends StatelessWidget {
-  final List<CourseData> courses;
-
-  const AttendanceSummaryCard({super.key, required this.courses});
-
-  @override
-  Widget build(BuildContext context) {
-    final c = AppColorSchemeExt.of(context);
-
-    // ── Aggregates ──────────────────────────────────────────────────
-    final totalAttended = courses.fold(0, (sum, c) => sum + c.attended);
-    final totalConducted = courses.fold(0, (sum, c) => sum + c.total);
-    final overallPct = totalConducted == 0
-        ? 0.0
-        : totalAttended / totalConducted * 100;
-    final atRisk = courses.where((c) => !c.isSafe).length;
-    final progressFraction = (overallPct / 100).clamp(0.0, 1.0);
-    final isSafe = overallPct >= 75;
-
-    return Container(
-      padding: const EdgeInsets.fromLTRB(20, 18, 20, 16),
-      decoration: BoxDecoration(
-        color: c.surfaceBg,
-        borderRadius: BorderRadius.circular(AppDimens.radiusLg),
-        border: Border.all(color: c.surfaceBorder),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // ── Row 1: label + at-risk badge ──────────────────────────
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Left: label + big percentage
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Overall attendance',
-                      style: AppTextStyles.statLabel.copyWith(
-                        color: c.textMuted,
-                        fontSize: 12,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '${overallPct.toStringAsFixed(1)}%',
-                      style: TextStyle(
-                        fontSize: 38,
-                        fontWeight: FontWeight.w800,
-                        color: c.textPrimary,
-                        height: 1.0,
-                        letterSpacing: -1,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Right: at-risk count
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    '$atRisk',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w800,
-                      color: atRisk > 0 ? c.accentRed : c.textMuted,
-                      height: 1.3,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    'courses at risk',
-                    style: AppTextStyles.statLabel.copyWith(
-                      color: c.textMuted,
-                      fontSize: 11,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 14),
-
-          // ── Progress bar ──────────────────────────────────────────
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final barWidth = constraints.maxWidth;
-              return Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  // Track
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(99),
-                    child: Container(
-                      height: 6,
-                      color: Colors.white.withOpacity(0.05),
-                      child: FractionallySizedBox(
-                        alignment: Alignment.centerLeft,
-                        widthFactor: progressFraction,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: isSafe
-                                  ? [
-                                      c.accentGreen.withOpacity(0.6),
-                                      c.accentGreen,
-                                    ]
-                                  : [c.accentRed, c.accentRed.withOpacity(0.7)],
-                            ),
-                            borderRadius: BorderRadius.circular(99),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  // 75% tick
-                  Positioned(
-                    left: barWidth * 0.75 - 0.5,
-                    top: -3,
-                    child: Container(
-                      width: 1.5,
-                      height: 12,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.35),
-                        borderRadius: BorderRadius.circular(1),
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-
-          const SizedBox(height: 10),
-
-          // ── Row 3: classes count + min label ─────────────────────
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '$totalAttended/$totalConducted classes',
-                style: AppTextStyles.statLabel.copyWith(color: c.textMuted),
-              ),
-              Text(
-                'min 75%',
-                style: AppTextStyles.statLabel.copyWith(color: c.textSubtle),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
+import '../course_detail.dart';
+import '../../../utils/analytics.dart';
 
 class AttendanceView extends StatelessWidget {
   final List<CourseData> courses;
   final List<Widget> topChildren;
+  final Future<void> Function() onRefresh;
 
   const AttendanceView({
     super.key,
     required this.courses,
+    required this.onRefresh,
     this.topChildren = const [],
   });
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      slivers: [
-        for (final child in topChildren) SliverToBoxAdapter(child: child),
-        SliverPadding(
-          padding: EdgeInsets.fromLTRB(
-            16,
-            topChildren.isEmpty ? 16 : 8,
-            16,
-            32,
-          ),
-          sliver: SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) => CourseTile(
-                course: courses[index],
-                onTap: () {
-                  // TODO: Navigator.push to CourseDetailPage
-                },
+    final c = AppColorSchemeExt.of(context);
+    return RefreshIndicator(
+      onRefresh: onRefresh,
+      color: c.accentGreen,
+      backgroundColor: c.surfaceBg,
+      child: CustomScrollView(
+        slivers: [
+          for (final child in topChildren) SliverToBoxAdapter(child: child),
+          SliverPadding(
+            padding: EdgeInsets.fromLTRB(
+              16,
+              topChildren.isEmpty ? 16 : 8,
+              16,
+              32,
+            ),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) => CourseTile(
+                  course: courses[index],
+                  onTap: () {
+                    AnalyticsService.logCourseDetailView(courses[index].code);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            CourseDetailScreen(course: courses[index]),
+                      ),
+                    );
+                  },
+                ),
+                childCount: courses.length,
               ),
-              childCount: courses.length,
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -340,9 +197,14 @@ class CourseTile extends StatelessWidget {
                               child: Container(
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
-                                    colors: safe
+                                    colors: course.isSafe
                                         ? [course.color, c.accentGreen]
+                                        : course.isWarning
+                                        ? [Colors.orange, course.color]
                                         : [c.accentRed, course.color],
+                                    // colors: safe
+                                    //     ? [course.color, c.accentGreen]
+                                    //     : [c.accentRed, course.color],
                                   ),
                                   borderRadius: BorderRadius.circular(99),
                                 ),
@@ -374,20 +236,18 @@ class CourseTile extends StatelessWidget {
 class _AttendancePill extends StatelessWidget {
   final int attended;
   final int total;
-
   const _AttendancePill({required this.attended, required this.total});
 
   @override
   Widget build(BuildContext context) {
     final pct = total == 0 ? 0.0 : attended / total * 100;
     final c = AppColorSchemeExt.of(context);
-    final safe = pct >= 75;
-    final color = safe ? c.accentGreen : c.accentRed;
-    final sign = safe
-        ? pct >= 85
-              ? "Safe"
-              : "Moderate"
-        : "Risky";
+    final sign = pct >= 75 ? (pct >= 85 ? 'Safe' : 'Moderate') : 'Risky';
+    final color = pct >= 85
+        ? c.accentGreen
+        : pct >= 75
+        ? Colors.orange
+        : c.accentRed;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(

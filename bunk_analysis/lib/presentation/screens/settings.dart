@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../main.dart'; // for themeModeNotifier
 import '../../core/constants/app_colors.dart';
 import 'profile.dart';
+import '../../utils/analytics.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -50,9 +51,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 return _ThemeToggle(
                   isDark: isDark,
                   onChanged: (val) {
-                    themeModeNotifier.value = val
-                        ? ThemeMode.dark
-                        : ThemeMode.light;
+                    final newMode = val ? ThemeMode.dark : ThemeMode.light;
+                    themeModeNotifier.value = newMode;
+                    AnalyticsService.logThemeToggle(newMode.name);
+                    // themeModeNotifier.value = val
+                    //     ? ThemeMode.dark
+                    //     : ThemeMode.light;
+                    //     AnalyticsService.logThemeToggle(val.name);
                   },
                 );
               },

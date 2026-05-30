@@ -1,3 +1,5 @@
+This file structure represents the initial plan, there are some changes made in the actual folders
+
 lib/
 │
 ├── main.dart                       # Entry point: Initializes app-wide dark theme
