@@ -171,7 +171,7 @@ class CourseTile extends StatelessWidget {
                       value: safe
                           ? (course.bunkable == 0 ? '0' : '+${course.bunkable}')
                           : '-${course.mustAttend}',
-                      label: safe ? 'can bunk' : 'must go',
+                      label: safe ? 'can skip' : 'must go',
                       valueColor: safe ? c.accentGreen : c.accentRed,
                     ),
                   ],

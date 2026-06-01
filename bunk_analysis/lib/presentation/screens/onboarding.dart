@@ -282,7 +282,7 @@ class _OnboardingPage2 extends StatelessWidget {
           const SizedBox(height: 12),
 
           Text(
-            'Your college has two attendance limits you need to stay above.',
+            'Our college has attendance limits you need to stay above.',
             style: TextStyle(fontSize: 14, color: c.textMuted, height: 1.6),
           ),
 
@@ -342,7 +342,7 @@ class _OnboardingPage3 extends StatelessWidget {
           const SizedBox(height: 16),
 
           Text(
-            'Plan before\nyou bunk',
+            'Plan before\nyou skip',
             style: TextStyle(
               fontSize: 34,
               fontWeight: FontWeight.w800,

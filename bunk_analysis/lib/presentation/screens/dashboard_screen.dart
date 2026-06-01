@@ -125,32 +125,6 @@ class _MyHomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final c = AppColorSchemeExt.of(context);
-    // return Scaffold(
-    //   backgroundColor: c.pageBg,
-    //   drawer: CustomSideBar(
-    //     userName: userName,
-    //     userEmail: email,
-    //     userMobile: regno,
-    //     usn: usn,
-    //     onSectionSelected: _selectSection,
-    //     onLogout: _handleLogout,
-    //   ),
-    //   // no appBar here
-    //   body: NestedScrollView(
-    //     headerSliverBuilder: (context, _) => [
-    //       SliverPersistentHeader(
-    //         pinned: true,
-    //         delegate: HomeAppBar(
-    //           userName: userName,
-    //           appTitle: widget.title,
-    //           onRefresh: _loadAttendance,
-    //           c: c,
-    //         ),
-    //       ),
-    //     ],
-    //     body: _buildBody(),
-    //   ),
-    // );
     return Scaffold(
       backgroundColor: c.pageBg,
       drawer: CustomSideBar(
@@ -208,17 +182,6 @@ class _MyHomePageState extends State<HomePage> {
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
               child: AttendanceSummaryCard(courses: _Courses),
             ),
-            // Padding(
-            //   padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
-            //   child: Text(
-            //     'YOUR COURSES',
-            //     style: TextStyle(
-            //       fontSize: 12,
-            //       fontWeight: FontWeight.w600,
-            //       letterSpacing: 1.4,
-            //     ),
-            //   ),
-            // ),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
               child: Row(
