@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../screens/login_screen.dart';
 import '../../core/security/credential_vault.dart';
 import '../../navbar.dart';
@@ -9,7 +10,9 @@ import '../../presentation/screens/widgets/attendance_card.dart';
 import '../../data/providers/portal_scrapper.dart';
 import '../../presentation/screens/widgets/overall_stats.dart';
 import '../../presentation/screens/widgets/appbar.dart';
+import '../../presentation/screens/widgets/resources_card.dart';
 import '../../utils/analytics.dart';
+import '../../utils/update_alert.dart';
 
 // ─── Placeholder courses ──────────────────────────────────────────────────────
 
@@ -37,6 +40,15 @@ class _MyHomePageState extends State<HomePage> {
     super.initState();
     _loadprofile();
     _loadAttendance();
+    _checkForUpdates();
+  }
+
+  Future<void> _checkForUpdates() async {
+    final update = await UpdateService.checkForUpdates();
+
+    if (!mounted || update == null) return;
+
+    _showUpdateDialog(update);
   }
 
   Future<void> _loadAttendance() async {
@@ -57,6 +69,35 @@ class _MyHomePageState extends State<HomePage> {
       _loading = false;
       lastUpdate = update;
     });
+  }
+
+  void _showUpdateDialog(Map<String, dynamic> update) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text('NSync ${update["latestVersion"]} Available'),
+
+        content: SingleChildScrollView(child: Text(update["releaseNotes"])),
+
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('Later'),
+          ),
+
+          TextButton(
+            onPressed: () async {
+              final uri = Uri.parse(update["releaseUrl"]);
+
+              await launchUrl(uri, mode: LaunchMode.externalApplication);
+            },
+            child: const Text('Update'),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _loadprofile() async {
@@ -181,6 +222,10 @@ class _MyHomePageState extends State<HomePage> {
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
               child: AttendanceSummaryCard(courses: _Courses),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+              child: ResourcesBanner(),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
