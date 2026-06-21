@@ -9,7 +9,7 @@ import '../../data/models/course_attendance.dart';
 import '../../presentation/screens/widgets/attendance_card.dart';
 import '../../data/providers/portal_scrapper.dart';
 import '../../presentation/screens/widgets/overall_stats.dart';
-import '../../presentation/screens/widgets/appbar.dart';
+// import '../../presentation/screens/widgets/appbar.dart';
 import '../../presentation/screens/widgets/resources_card.dart';
 import '../../utils/analytics.dart';
 import '../../utils/update_alert.dart';
@@ -225,7 +225,7 @@ class _MyHomePageState extends State<HomePage> {
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-              child: ResourcesBanner(),
+              child: ResourcesBanner(courses: _Courses),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),

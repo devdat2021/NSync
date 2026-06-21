@@ -4,12 +4,18 @@ import 'core/constants/app_colors.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 final themeModeNotifier = ValueNotifier<ThemeMode>(ThemeMode.dark);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Supabase.initialize(
+    url: 'https://bsqypwzjwvldocyqakdk.supabase.co',
+    publishableKey:
+        'sb_publishable_CGEDJaYMwKSciy8KxMYkpA_bq2-PrI4', // not the service_role key
+  );
   runApp(const MyApp());
 }
 

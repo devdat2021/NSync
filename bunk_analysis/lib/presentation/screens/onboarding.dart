@@ -20,6 +20,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     _OnboardingPage1(),
     _OnboardingPage2(),
     _OnboardingPage3(),
+    _OnboardingPageResources(),
+
     _OnboardingPage4(),
   ];
 
@@ -242,6 +244,7 @@ class _OnboardingPage1 extends StatelessWidget {
               _Pill(label: '📊 Live attendance', c: c),
               _Pill(label: '🎯 Bunk simulator', c: c),
               _Pill(label: '⚠️ Risk alerts', c: c),
+              _Pill(label: '📚 PYQs & notes', c: c),
             ],
           ),
         ],
@@ -425,6 +428,149 @@ class _OnboardingPage3 extends StatelessWidget {
   }
 }
 
+// ─── Page — Resources & PYQs ──────────────────────────────────────────────────
+
+class _OnboardingPageResources extends StatelessWidget {
+  const _OnboardingPageResources();
+
+  @override
+  Widget build(BuildContext context) {
+    final c = AppColorSchemeExt.of(context);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 28),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _PageTag(label: 'RESOURCES', c: c),
+          const SizedBox(height: 16),
+
+          Text(
+            'Notes & PYQs,\nsorted for you',
+            style: TextStyle(
+              fontSize: 34,
+              fontWeight: FontWeight.w800,
+              color: c.textPrimary,
+              height: 1.1,
+              letterSpacing: -1,
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          Text(
+            'Your required notes are automatically fetched from our cloud storage, avoiding the long searches',
+            style: TextStyle(fontSize: 14, color: c.textMuted, height: 1.6),
+          ),
+
+          const SizedBox(height: 32),
+
+          // Mock resource cards
+          _MockResourceCard(
+            title: 'Design and Analysis of Algorithms',
+            fileType: 'PYQ · May 2025',
+            c: c,
+          ),
+          const SizedBox(height: 10),
+          _MockResourceCard(
+            title: 'Database Management Systems',
+            fileType: 'Notes · Module 1-5',
+            c: c,
+          ),
+          const SizedBox(height: 10),
+          _MockResourceCard(
+            title: 'Internet & Web Programming',
+            fileType: 'Notes · Full syllabus',
+            c: c,
+          ),
+
+          const SizedBox(height: 20),
+
+          Row(
+            children: [
+              Icon(Icons.auto_awesome_rounded, size: 14, color: c.accentGreen),
+              const SizedBox(width: 6),
+              Text(
+                'Less searching, no folders — just your subjects',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: c.accentGreen,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MockResourceCard extends StatelessWidget {
+  final String title;
+  final String fileType;
+  final AppColorSchemeExt c;
+
+  const _MockResourceCard({
+    required this.title,
+    required this.fileType,
+    required this.c,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: c.surfaceBg,
+        borderRadius: BorderRadius.circular(AppDimens.radiusLg),
+        border: Border.all(color: c.surfaceBorder),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: c.accentRed.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(AppDimens.radiusMd),
+            ),
+            child: Icon(
+              Icons.picture_as_pdf_rounded,
+              size: 17,
+              color: c.accentRed,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: c.textPrimary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  fileType,
+                  style: TextStyle(fontSize: 11, color: c.textMuted),
+                ),
+              ],
+            ),
+          ),
+          Icon(Icons.menu_book_outlined, size: 16, color: c.textSubtle),
+        ],
+      ),
+    );
+  }
+}
 // ─── Page 4 — Privacy ─────────────────────────────────────────────────────────
 
 class _OnboardingPage4 extends StatelessWidget {

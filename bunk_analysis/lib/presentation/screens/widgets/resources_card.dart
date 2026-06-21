@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../under_development.dart';
+import '../materials.dart';
+import '../../../data/repositories/attendance_data.dart';
+import '/../data/models/course_attendance.dart';
 
 class ResourcesBanner extends StatelessWidget {
-  const ResourcesBanner();
+  final List<CourseData> courses;
+  const ResourcesBanner({super.key, required this.courses});
 
   @override
   Widget build(BuildContext context) {
@@ -11,11 +15,24 @@ class ResourcesBanner extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
+        final courseNames = courses.map((course) => course.name).toList();
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const UnderDevelopmentPage()),
+          MaterialPageRoute(
+            builder: (_) => ResourcesView(courseNames: courseNames),
+          ),
         );
       },
+      // onTap: () {
+      //   Navigator.push(
+      //     context,
+      //     MaterialPageRoute(builder: (_) => const ResourcesView()),
+      //   );
+      //   // Navigator.push(
+      //   //   context,
+      //   //   MaterialPageRoute(builder: (_) => const UnderDevelopmentPage()),
+      //   // );
+      // },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
@@ -45,14 +62,14 @@ class ResourcesBanner extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Notes & Resources',
+                    'PYQs & Resources',
                     style: AppTextStyles.courseName.copyWith(
                       color: c.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    'Browse notes and PYQs for your courses',
+                    'Browse materials for your courses',
                     style: AppTextStyles.statLabel.copyWith(color: c.textMuted),
                   ),
                 ],

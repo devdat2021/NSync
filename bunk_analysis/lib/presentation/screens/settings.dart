@@ -107,7 +107,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _SettingsTile(
             icon: Icons.info_outline_rounded,
             label: 'App version',
-            subtitle: '1.0.0',
+            subtitle: '1.1.0',
             showChevron: false,
           ),
         ],
