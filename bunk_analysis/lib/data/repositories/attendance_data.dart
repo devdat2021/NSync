@@ -19,6 +19,15 @@ class LocalCache {
     return jsonDecode(data);
   }
 
+  static Future<String> getUSN() async {
+    final profile = await getProfile();
+    String _get(String key, [String fallback = '—']) =>
+        profile[key]?.toString().isNotEmpty == true
+        ? profile[key].toString()
+        : fallback;
+    return _get('strRegno');
+  }
+
   // ATTENDANCE ----------------------------
 
   static Future<void> saveAttendance(dynamic attendanceData) async {

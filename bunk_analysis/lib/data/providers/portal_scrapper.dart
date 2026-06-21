@@ -3,6 +3,9 @@ import 'package:intl/intl.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:cookie_jar/cookie_jar.dart';
+import '../models/result_model.dart';
+import '../repositories/result_data.dart';
+import '../../core/security/credential_vault.dart';
 
 class PortalApi {
   late Dio dio;
@@ -32,7 +35,6 @@ class PortalApi {
       if (resp is Map) {
         map = Map<String, dynamic>.from(resp);
       } else if (resp is String) {
-        // Some servers return JSON as a String or return HTML — try to decode JSON
         try {
           final parsed = json.decode(resp);
           if (parsed is Map) map = Map<String, dynamic>.from(parsed);
@@ -40,7 +42,7 @@ class PortalApi {
             map = Map<String, dynamic>.from(parsed[0]);
           }
         } catch (e) {
-          // Not JSON - log and return false
+          // Not JSON: log and return false
           print(
             'PortalApi.login: non-JSON response: ${resp.substring(0, resp.length > 200 ? 200 : resp.length)}',
           );
@@ -87,5 +89,67 @@ class PortalApi {
         'date': today,
       },
     );
+  }
+
+  // Future<List<SemesterSummary>> fetchAllResults(String usn) async {
+  //   final response = await dio.get(
+  //     '/src/results_new.php',
+  //     queryParameters: {'a': 'getResAll', 'UNIVCODE': '049', 'REGNO': usn},
+  //   );
+
+  //   print('REQUEST URL: ${response.requestOptions.uri}'); // ← add this
+  //   print('RAW RESPONSE: ${response.data}');
+
+  //   final raw = response.data;
+  //   final json = raw is String ? jsonDecode(raw) : raw;
+
+  //   final data = json['data'] as List<dynamic>;
+  //   return data.map((e) => SemesterSummary.fromJson(e)).toList();
+  // }
+  Future<List<SemesterSummary>> fetchAllResults() async {
+    // final response = await dio.get('/src/results_new.php?a=getResAll');
+
+    // print(response.data);
+    // print(response.data.runtimeType);
+    final response = await dio.get(
+      'https://studentportal.universitysolutions.in/src/results_new.php',
+      queryParameters: {
+        'a': 'getResAll',
+        'UNIVCODE': '049',
+        'REGNO': 'NNM24IS145',
+      },
+    );
+
+    print(response.requestOptions.uri);
+    print(response.data);
+    final json = response.data is String
+        ? jsonDecode(response.data)
+        : response.data;
+
+    print(json.runtimeType);
+    print(json['data'].runtimeType);
+
+    final data = json['data'] as List<dynamic>;
+    return data.map((e) => SemesterSummary.fromJson(e)).toList();
+  }
+  // Future<List<SemesterSummary>> fetchAllResults() async {
+  //   final response = await dio.get('/src/results_new.php?a=getResAll');
+  //   final data = response.data['data'] as List<dynamic>;
+  //   return data.map((e) => SemesterSummary.fromJson(e)).toList();
+  // }
+
+  Future<List<SubjectResult>> fetchSemesterDetail(
+    String examNo,
+    String regno,
+  ) async {
+    final response = await dio.get(
+      '/src/results_new.php?a=getResDet&examno=$examNo&regno=$regno',
+    );
+    final json = response.data is String
+        ? jsonDecode(response.data)
+        : response.data;
+
+    final data = json['data'] as Map<String, dynamic>;
+    return parseSubjectResults(data);
   }
 }

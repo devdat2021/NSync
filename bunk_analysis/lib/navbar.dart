@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/gestures.dart';
 import 'presentation/screens/settings.dart';
+import 'presentation/screens/results.dart';
 import 'presentation/screens/profile.dart';
 import 'core/constants/app_colors.dart';
 
@@ -53,6 +54,20 @@ class CustomSideBar extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 children: [
+                  _buildNavTile(
+                    context,
+                    icon: Icons.assessment_outlined,
+                    title: 'Results',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const ResultsScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 8),
                   _buildNavTile(
                     context,
                     icon: Icons.settings_outlined,
