@@ -22,6 +22,18 @@ This app helps students monitor their attendance, predict risk of "defaulting" (
 - Prioritization: when schedules conflict, the app indicates which classes have higher urgency so you can make informed choices.
 - Timely reminders: configurable notifications reduce accidental absences and help you stick to your plan.
 
+## Screenshots Preview
+
+| Dashboard Overview | Course Analytics & Details | Profile & Portal Info |
+| :---: | :----: | :---: |
+| ![Dashboard Layout](SS/dash.png) | ![Course View](SS/course.jpg) | ![User Profile Page](SS/prof_page.png) |
+
+| Exam Results Analytics | Shared Study Materials |
+| :---: | :---: |
+| ![Results Breakdown](SS/results.jpg) | ![Resources Repository](SS/resources.jpg) |
+
+---
+
 ## Quick Start (development)
 
 Prerequisites: install the Flutter SDK (stable channel) and set up an emulator or connect a device.
