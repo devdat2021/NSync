@@ -1,29 +1,46 @@
-This file structure represents the initial plan, there are some changes made in the actual folders
+Note: This file structure may change with future updates so consider verifying if contributing/working on the app further.
 
 lib/
 │
-├── main.dart                       # Entry point: Initializes app-wide dark theme
+├── main.dart                       # App entry point, theme setup
+├── navbar.dart                     # Bottom navigation bar
 │
-├── core/                           # App-wide constants, security vaults, and themes
+├── core/                           # App-wide config and security
 │   ├── constants/
-│   │   └── app_colors.dart         # Hex codes for your exact midnight/emerald dark theme
+│   │   ├── app_colors.dart         # Color palette
+│   │   └── threshold.dart          # Attendance threshold (e.g. 75%)
 │   └── security/
-│       └── credential_vault.dart   # Encrypted Hardware-Backed storage wrapper
+│       └── credential_vault.dart   # Secure storage for login credentials
 │
-├── data/                           # Data layer (Scraping, Local Caching, Data Models)
+├── data/                           # Data models, parsing, repositories
 │   ├── models/
-│   │   └── course_attendance.dart  # Holds data and your custom bunk/recovery math
+│   │   ├── course_attendance.dart  # Attendance data model + bunk calculation
+│   │   ├── resources.dart          # Notes/resources data model
+│   │   └── result_model.dart       # Semester results/GPA data model
 │   ├── providers/
-│   │   └── portal_scraper.dart     # Emulated 2-step cURL networking (Dio + Cookies)
+│   │   └── portal_scrapper.dart    # Scrapes attendance from college portal
 │   └── repositories/
-│       └── attendance_data.dart # Logic coordinating cache vs fresh live server data
+│       ├── attendance_data.dart    # Handles attendance data
+│       ├── notes.dart              # Handles notes/resources data
+│       └── result_data.dart        # Handles results/GPA data
 │
-└── presentation/                   # Presentation Layer (Separate Scaffolds & Views)
-    ├── screens/
-    │   ├── splash_gatekeeper.dart  # Routes user based on saved login presence
-    │   ├── setup_login_screen.dart # User credential input page (first-time launch)
-    │   ├── dashboard_screen.dart   # Main view matching your uploaded high-contrast UI
-    │   └── detailed_calc_screen.dart # Separate Scaffold deep-dive calculator view
-    └── widgets/
-        ├── overall_stats_card.dart # The large top component (74.2% summary layout)
-        └── attendance_card_item.dart # The dynamic course card component with pill badges
+└── presentation/                   # Screens and UI
+    └── screens/
+        ├── block_access.dart       # Blocks access if account restricted
+        ├── course_detail.dart      # Subject-wise attendance details
+        ├── dashboard_screen.dart   # Home dashboard
+        ├── gatekeeper.dart         # Checks login state on app start
+        ├── login_screen.dart       # Login screen
+        ├── materials.dart          # Notes and PYQs screen
+        ├── onboarding.dart         # First-time user walkthrough
+        ├── pdf_viewer_screen.dart  # PDF viewer
+        ├── profile.dart            # User profile screen
+        ├── results.dart            # Semester results screen
+        ├── settings.dart           # Settings screen
+        ├── terms_and_conditions.dart # T&C and privacy info
+        ├── under_development.dart   # Placeholder for upcoming features
+        └── widgets/
+            ├── appbar.dart         # Common app bar
+            ├── attendance_card.dart # Attendance card with bunk indicator
+            ├── overall_stats.dart  # Overall attendance summary widget
+            └── resources_card.dart # Resource/note item card
