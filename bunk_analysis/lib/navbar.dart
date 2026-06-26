@@ -99,7 +99,7 @@ class CustomSideBar extends StatelessWidget {
                       showAboutDialog(
                         context: context,
                         applicationName: 'NSync',
-                        applicationVersion: '1.1.0',
+                        applicationVersion: '1.1.1',
                         children: [
                           Text.rich(
                             TextSpan(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../data/providers/portal_scrapper.dart';
 import '../../core/security/credential_vault.dart';
+import '../../core/security/access_control.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login_screen.dart';
 import 'dashboard_screen.dart';
@@ -51,10 +52,11 @@ class _SplashGatekeeperState extends State<SplashGatekeeper> {
     final api = PortalApi();
 
     final success = await api.login(regno: regno, password: password);
+    final blocked = await AccessControlService.isBlocked(regno);
 
     // LOGIN SUCCESS
     if (success) {
-      if (regno != '8660550205') {
+      if (!blocked) {
         // if (regno.trim() != '9902471137' && regno.trim() != '8762926081') {
         goToDashboard();
       } else {
