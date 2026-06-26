@@ -47,6 +47,12 @@ flutter run
 
 All attendance data is stored locally on the device by default. No data is transmitted unless you explicitly export or share reports.
 
+## Creators
+
+* **[P Devdat](https://github.com/devdat2021)**
+* **[Pramukh Nayak](https://github.com/pramukhnayak7)**
+
+
 ## Contributing
 
 Contributions are welcome: bug reports, feature requests, and PRs that improve the app's usefulness for maintaining attendance compliance.
